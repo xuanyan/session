@@ -7,8 +7,6 @@ class Session
     private static $pdo = null;
     private static $ua = null;
     private static $ip = null;
-    private static $data = null;
-    private static $update_time = null;
     private static $lifetime = null;
     private static $time = null;
 
@@ -74,10 +72,7 @@ class Session
             return '';
         }
 
-        self::$data = $query['data'];
-        self::$update_time = $query['update_time'];
-
-        return $query['data'];
+        return $result['data'];
     }
 
     public static function write($PHPSESSID, $data)
@@ -87,14 +82,14 @@ class Session
         $sth->execute(array($PHPSESSID));
 
         // test sessionkey是否存在
-        if (self::$query->select('sessions', 'sesskey')->where('sesskey', $sesskey)->getOne())
+        if ($result = $sth->fetch(PDO::FETCH_ASSOC))
         {
             // 当session数据没有在30s内改变则不更新
-            if (self::$data != $data || self::$time > (self::$update_time + 30))
+            if ($result['data'] != $data || self::$time > ($result['update_time'] + 30))
             {
-                $query = self::$query->update('sessions')->set(array('update_time'=>self::$time, 'data'=>$data))
-                                     ->where('sesskey', $sesskey)
-                                     ->exec();
+                $sql = "UPDATE session SET update_time = ?, data = ? WHERE PHPSESSID = ?";
+                $sth = self::$pdo->prepare($sql);
+                $sth->execute(array(self::$time, $data, $PHPSESSID));
             }
         }
         else
@@ -102,26 +97,30 @@ class Session
             // 空session不插入记录
             if (!empty($data))
             {
-                $query = self::$query->insert('sessions', 'sesskey, update_time, ip, agent, data')
-                                    ->values(array($sesskey, self::$time, self::$ip, self::$ua, $data))
-                                    ->exec();
+                $sql = "INSERT INTO session (PHPSESSID, update_time, client_ip, user_agent, data) VALUES (?, ?, ?, ?, ?)";
+                $sth = self::$pdo->prepare($sql);
+                $sth->execute(array($PHPSESSID, self::$time, self::$ip, self::$ua, $data));
             }
         }
 
         return true;
     }
 
-    public static function destroy($sesskey)
+    public static function destroy($PHPSESSID)
     {
-        $query = self::$query->delete('sessions')->where('sesskey', $sesskey)
-                             ->exec();
+        $sql = "DELETE FROM session WHERE PHPSESSID = ?";
+        $sth = self::$pdo->prepare($sql);
+        $sth->execute(array($PHPSESSID));
+
         return true;
     }
 
-    private static function gc($life)
+    private static function gc($lifetime)
     {
-        $query = self::$query->delete('sessions')->where('update_time', self::$time - $life, '<')
-                                                 ->exec();
+        $sql = "DELETE FROM session WHERE update_time < ?";
+        $sth = self::$pdo->prepare($sql);
+        $sth->execute(array(self::$time - $lifetime));
+
         return true;
     }
 }
