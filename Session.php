@@ -67,7 +67,7 @@ class Session
             return '';
         }
 
-        if (($query['update_time'] + self::$lifetime) < self::$time)
+        if (($result['update_time'] + self::$lifetime) < self::$time)
         {
             self::destroy($PHPSESSID);
 
@@ -80,8 +80,12 @@ class Session
         return $query['data'];
     }
 
-    public static function write($sesskey, $data)
+    public static function write($PHPSESSID, $data)
     {
+        $sql = "SELECT * FROM session WHERE PHPSESSID = ?";
+        $sth = self::$pdo->prepare($sql);
+        $sth->execute(array($PHPSESSID));
+
         // test sessionkey是否存在
         if (self::$query->select('sessions', 'sesskey')->where('sesskey', $sesskey)->getOne())
         {
