@@ -65,12 +65,12 @@ class Session
             return '';
         }
 
-        if (($result['update_time'] + self::$lifetime) < self::$time)
-        {
-            self::destroy($PHPSESSID);
+        //if (($result['update_time'] + self::$lifetime) < self::$time)
+        //{
+        //    self::destroy($PHPSESSID);
 
-            return '';
-        }
+          //  return '';
+        //}
 
         return $result['data'];
     }
