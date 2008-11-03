@@ -18,6 +18,7 @@ class Session
                     (!empty($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] :
                     (!empty($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : 'unknown'));
 
+        // 判断是否为合法ip
         filter_var(self::$ip, FILTER_VALIDATE_IP) === false && self::$ip = 'unknown';
 
         self::$lifetime = ini_get('session.gc_maxlifetime');
@@ -57,14 +58,14 @@ class Session
         {
             return '';
         }
-
+        // ua ip 更改
         if (self::$ip != $result['client_ip'] || self::$ua != $result['user_agent'])
         {
             self::destroy($PHPSESSID);
 
             return '';
         }
-
+        // 过期
         if (($result['update_time'] + self::$lifetime) < self::$time)
         {
             self::destroy($PHPSESSID);
