@@ -2,7 +2,7 @@
 
 /* www.kukufun.com Session Class-test by xuanyan <xunayan1983@gmail.com> */
 
-require './Session.php';
+require './Session.Pdo.php';
 
 $db_file = dirname(__FILE__) . '/session.db';
 
