@@ -12,7 +12,7 @@ abstract class abstract_session
 
     protected static function init($handler)
     {
-        require_once './session.config.php';
+        require_once dirname(__FILE__) . '/session.config.php';
 
         self::$handler = $handler;
 
@@ -26,6 +26,14 @@ abstract class abstract_session
 
         self::$lifetime = ini_get('session.gc_maxlifetime');
         self::$time = time();
+
+        $session_name = ini_get('session.name');
+
+        // fix for swf ie.swfupload
+        if (isset($_POST[$session_name]))
+        {
+            session_id($_POST[$session_name]);
+        }
     }
 }
 ?>

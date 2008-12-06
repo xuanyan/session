@@ -9,6 +9,7 @@
 //ini_set('session.gc_divisor', 100);
 //ini_set('session.gc_maxlifetime', 1440);
 
+//ini_set('session.name', 'PHPSESSID');
 //ini_set('session.use_cookies', 1);
 //ini_set('session.cookie_path', '/');
 //ini_set('session.cookie_domain', '');

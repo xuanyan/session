@@ -2,7 +2,7 @@
 
 /* www.kukufun.com Session Class by xuanyan <xunayan1983@gmail.com> */
 
-require_once './Abstract.php';
+require_once dirname(__FILE__) . '/Abstract.php';
 
 class Session extends abstract_session
 {

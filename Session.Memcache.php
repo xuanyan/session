@@ -2,10 +2,12 @@
 
 /* kukufun Session.Memcache by xuanyan <xunayan1983@gmail.com> */
 
-require_once './Abstract.php';
+require_once dirname(__FILE__) . '/Abstract.php';
 
 class Session extends abstract_session
 {
+    const NS = 'session_';
+
     public static function start(Memcache $memcache)
     {
         parent::init($memcache);
@@ -32,22 +34,30 @@ class Session extends abstract_session
 
     private static function read($PHPSESSID)
     {
-        
+        $out = parent::$handler->get(self::NS . $PHPSESSID);
+        if ($out === false || $out === null)
+        {
+            return '';
+        }
+
+        return $out;
     }
 
     public static function write($PHPSESSID, $data)
     {
-        
+        $method = $data ? 'set' : 'replace';
+
+        return parent::$handler->$method(self::NS . $PHPSESSID, $data, MEMCACHE_COMPRESSED, parent::$lifetime);
     }
 
     public static function destroy($PHPSESSID)
     {
-        
+        return parent::$handler->delete(self::NS . $PHPSESSID);
     }
 
     private static function gc($lifetime)
     {
-        
+        return true;
     }
 }
 
