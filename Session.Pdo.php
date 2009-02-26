@@ -43,9 +43,11 @@ class Session extends abstract_session
         // ua ip 更改
         if (parent::$ip != $result['client_ip'] || parent::$ua != $result['user_agent'])
         {
-            self::destroy($PHPSESSID);
-
-            return '';
+            if (!self::$flash)
+            {
+                self::destroy($PHPSESSID);
+                return '';
+            }
         }
         // 过期
         if (($result['update_time'] + parent::$lifetime) < parent::$time)

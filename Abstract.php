@@ -9,6 +9,7 @@ abstract class abstract_session
     protected static $ip = null;
     protected static $lifetime = null;
     protected static $time = null;
+    protected static $flash = false;
 
     protected static function init($handler)
     {
@@ -32,6 +33,7 @@ abstract class abstract_session
         // fix for swf ie.swfupload
         if (isset($_POST[$session_name]))
         {
+            self::$flash = true;
             session_id($_POST[$session_name]);
         }
     }
