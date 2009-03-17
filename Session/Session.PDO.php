@@ -4,7 +4,7 @@
 
 require_once dirname(__FILE__) . '/Abstract.php';
 
-class Session extends abstract_session
+class Session_PDO extends abstract_session
 {
     public static function start(PDO $pdo)
     {

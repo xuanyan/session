@@ -4,7 +4,7 @@
 
 require_once dirname(__FILE__) . '/Abstract.php';
 
-class Session extends abstract_session
+class Session_Memcache extends abstract_session
 {
     const NS = 'session_';
 
