@@ -13,8 +13,6 @@ abstract class abstract_session
 
     protected static function init($handler)
     {
-        require_once dirname(__FILE__) . '/session.config.php';
-
         self::$handler = $handler;
 
         self::$ua = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';

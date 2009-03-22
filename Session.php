@@ -16,5 +16,12 @@ class Session
             throw new Exception("start session exception!");
         }
     }
+
+    public static function setConfig(array $config)
+    {
+        foreach ($config as $key => $val) {
+            ini_set('session.'.$key, $val);
+        }
+    }
 }
 ?>
